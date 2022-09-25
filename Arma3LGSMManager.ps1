@@ -101,20 +101,23 @@ function Install-LGSM {
 		}
 	}
 
+	$currectPath = Get-Location
 	Set-Location $RootPath
 	Invoke-Expression "chmod +x $linuxgsmPath"
 
-	$gamePath = "$linuxgsmPath/$GameName"
+	$gamePath = "$RootPath/$GameName"
 	if (!(Test-Path $gamePath)) {
 		Invoke-Expression "bash $fileName $GameName"
 		Start-Sleep -Seconds 1
 		if (!(Test-Path $gamePath)) {
+			Set-Location $currectPath
 			Write-Error "LGSM server script was not created. Please refer to above error"
 		}
 	}
 
 	Invoke-Expression "chmod +x $gamePath"
 	Invoke-Expression "$gamePath install"
+	Set-Location $currectPath
 	Write-Host "Installed Arma 3 through LGSM"
 }
 function Set-HeadlessClients {
