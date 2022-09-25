@@ -115,11 +115,35 @@ function Install-LGSM {
 		}
 	}
 
+	#Set config to allow SteamCMD to download Arma 3
+	$commonConfigPath = "$RootPath/lgsm/config-lgsm/arma3server/common.cfg"
+	if (!(Test-Path $commonConfigPath)) {
+		New-Item $commonConfigPath -Force
+	}
+
+	$commonConfig = Get-ConfigFile -ConfigPath $commonConfigPath
+
+	$steamUserName = "steamuser"
+	if (!$commonConfig.ContainsKey($steamUserName)) {
+		$username = Read-Host "Please enter your steam username for downloading Arma 3"
+		$commonConfig.Add($steamUserName, $username)
+	}
+
+	$steamPassName = "steampass"
+	if (!$commonConfig.ContainsKey($steamPassName)) {
+		$username = Read-Host "Please enter your steam password for downloading Arma 3"
+		$commonConfig.Add($steamPassName, $username)
+	}
+
+	Set-ConfigFile -Config $commonConfig -ConfigFilePath $commonConfigPath
+
+	Write-Host "Using credentails for $($commonConfig[$steamPassName]) in $commonConfigPath to sign into Steam"
+
 	Invoke-Expression "chmod +x $gamePath"
 	Invoke-Expression "$gamePath install" | Tee-Object linuxgsmLog
-	if ($linuxgsmLog -clike "*FAIL*") {
+	if ($linuxgsmLog -clike "*FAIL*" -or $linuxgsmLog -clike "*FAILED*") {
 		Set-Location $currectPath
-		Write-Error "Failed to install Arma 3 Server. Please refer to the error and try again"
+		Write-Error "Failed to install Arma 3 Server. Please try to resolve the error and try again"
 	}
 	Set-Location $currectPath
 	Write-Host "Installed Arma 3 through LGSM"
