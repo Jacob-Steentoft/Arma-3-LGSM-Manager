@@ -38,16 +38,16 @@ Port 2344 as UDP + TPC and 2345 as TPC for BattleEye.
 
 ## How to use
 
-Download both Arma3ServerCmd.ps1 and Arma3LGSMManager.ps1 and keep them in the same folder.
+Download Arma3LGSMManager.ps1.
 
 Run Arma3LGSMManager.ps1 using PowerShell 7 and provide the required parameters.
 
 **OBS**: -ServerPassword doesn't set the server password, but what password the headless clients will use to connect to your server.
 
-### Example
+### PowerShell Example
 
 ```PowerShell
-pwsh Arma3LGSMManager.ps1 -RootPath "/data/Servers/LinuxGSM/myarma3server" -SteamModCollectionId 1337 -SteamWhitelistModIds @(1105511475, 861133494) -ServerPort 2302 -ServerPassword "bingo" -HeadlessCount 3
+./Arma3LGSMManager.ps1 -RootPath "/data/Servers/LinuxGSM/myarma3server" -SteamModCollectionId 1337 -SteamWhitelistModIds @(1105511475, 861133494) -ServerPort 2302 -ServerPassword "bingo" -HeadlessCount 3
 ```
 
 The above will:
