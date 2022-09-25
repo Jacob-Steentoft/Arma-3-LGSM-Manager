@@ -101,11 +101,12 @@ function Install-LGSM {
 		}
 	}
 
+	Set-Location $RootPath
 	Invoke-Expression "chmod +x $linuxgsmPath"
 
 	$gamePath = "$linuxgsmPath/$GameName"
 	if (!(Test-Path $gamePath)) {
-		Invoke-Expression "bash '$linuxgsmPath' $GameName"
+		Invoke-Expression "bash $fileName $GameName"
 		if (!(Test-Path $gamePath)) {
 			Write-Error "LGSM server script was not created. Please refer to above error"
 		}
