@@ -97,7 +97,9 @@ function Install-LGSM {
 	Invoke-Expression "chmod +x $linuxgsmPath"
 	Invoke-Expression "bash $linuxgsmPath $GameName"
 
-	Invoke-Expression "$linuxgsmPath/$GameName install"
+	$gamePath = "$linuxgsmPath/$GameName"
+	Invoke-Expression "chmod +x $gamePath"
+	Invoke-Expression "$gamePath install"
 	Write-Host "Installed Arma 3 through LGSM"
 }
 function Set-HeadlessClients {

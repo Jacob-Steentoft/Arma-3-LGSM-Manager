@@ -4,6 +4,8 @@ Scripts for managing an Arma 3 server through LGSM that can install, update, and
 
 This script relies on the wonderful project at: <https://github.com/GameServerManagers/LinuxGSM>
 
+Further information about the installtion of the Arma 3 server can be found at: <https://linuxgsm.com/servers/arma3server/>
+
 ## :exclamation: Important Notes
 
 Running this script can and will overwrite files, so please make sure to set the root path to a place where it will not overwrite anything important.
