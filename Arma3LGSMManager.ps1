@@ -107,6 +107,7 @@ function Install-LGSM {
 	$gamePath = "$linuxgsmPath/$GameName"
 	if (!(Test-Path $gamePath)) {
 		Invoke-Expression "bash $fileName $GameName"
+		Start-Sleep -Seconds 1
 		if (!(Test-Path $gamePath)) {
 			Write-Error "LGSM server script was not created. Please refer to above error"
 		}
