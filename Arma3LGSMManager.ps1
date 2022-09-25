@@ -82,22 +82,35 @@ function Get-ConfigFile {
 function Install-LGSM {
 	param(
 		[Parameter(Mandatory)][string]$RootPath,
-		[Parameter(Mandatory)][string]$GameName
+		[Parameter(Mandatory)][string]$GameName,
+		[Parameter(Mandatory)][string]$ServerPath
 	)
 	$fileName = "linuxgsm.sh"
 	$linuxgsmPath = "$RootPath/$fileName"
 
-	if (Test-Path $linuxgsmPath) {
-		Write-Host "Found linuxgsm.sh"
+	if (Test-Path $ServerPath) {
+		Write-Host "Base instance has already been configured"
 		return
 	}
 
-	Invoke-RestMethod "https://$fileName" -OutFile $linuxgsmPath
+	if (!(Test-Path $linuxgsmPath)) {
+		Write-Host "Downloading linuxgsm.sh"
+		Invoke-RestMethod "https://$fileName" -OutFile $linuxgsmPath
+		if (!(Test-Path $linuxgsmPath)) {
+			Write-Error "LGSM script was not downloaded. Please refer to above error"
+		}
+	}
 
 	Invoke-Expression "chmod +x $linuxgsmPath"
-	Invoke-Expression "bash $linuxgsmPath $GameName"
 
 	$gamePath = "$linuxgsmPath/$GameName"
+	if (!(Test-Path $gamePath)) {
+		Invoke-Expression "bash $linuxgsmPath $GameName"
+		if (!(Test-Path $gamePath)) {
+			Write-Error "LGSM server script was not created. Please refer to above error"
+		}
+	}
+
 	Invoke-Expression "chmod +x $gamePath"
 	Invoke-Expression "$gamePath install"
 	Write-Host "Installed Arma 3 through LGSM"
@@ -489,7 +502,7 @@ $lgsmConfigPath = "$RootPath/lgsm/config-lgsm/$gameName"
 
 ##RUN
 if (!$Unattended) {
-	Install-LGSM -RootPath $RootPath -GameName $gameName
+	Install-LGSM -RootPath $RootPath -GameName $gameName -ServerPath $serverPath
 }
 
 Set-HeadlessClients -RootPath $RootPath -GameName $gameName -HeadlessCount $HeadlessCount
