@@ -12,14 +12,19 @@ Running this script can and will overwrite files, so please make sure to set the
 
 This script has only been tested using Debian 11. There should however not be any problems running this using other distros, as the functionaly relies on PowerShell, SteamCMD, and the LinuxGSM script.
 
-This script should be not be used by a sudo user. It has been designed and tested without any sudo commands or priviliges.
+This script has to be run by a sudo user the first few times until LinuxGSM has installed all the dependencies. It has been designed and tested without any sudo commands or priviliges afterwards.
 
 ## :police_car: Requirements
 
+### OS
+
+Tested on Debian 11 and 10. But should run on any linux distro.
+
 ### Applications
 
-* Curl
-* SteamCMD
+* curl
+* steamCMD
+* pwsh
 
 ### Ports
 
@@ -39,8 +44,6 @@ Port 2344 as UDP + TPC and 2345 as TPC for BattleEye.
 
 ### The Rest
 
-* Linux as the operating system
-* PowerShell Version 7
 * Access to the internet
 
 ## :bullettrain_front: How to use
