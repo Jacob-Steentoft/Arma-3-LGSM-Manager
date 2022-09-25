@@ -183,6 +183,7 @@ function Set-HeadlessClients {
 
 		Rename-Item -Path $newInstancePath -NewName $instanceName
 
+		Invoke-Expression "chmod +x $instanceName"
 		$null = Invoke-Expression "$instanceName details"
 		Write-Host "Created $instanceName"
 	}
