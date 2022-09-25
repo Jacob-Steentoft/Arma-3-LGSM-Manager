@@ -129,6 +129,60 @@ function Set-HeadlessClients {
 	}
 	Write-Host "All headless clients are ready"
 }
+function Invoke-LGSMScripts {
+	param(
+		[Parameter(Mandatory)][string]$RootPath,
+		[Parameter(Mandatory)][string]$GameName,
+		[byte]$HeadlessCount,
+		[Parameter(Mandatory)][string]$CMD
+	)
+	$serverInstancePath = "$RootPath/$GameName"
+	if (!(Test-Path $serverInstancePath)) {
+		Write-Error "Unable to resolve the path: $RootPath"
+	}
+
+	if ($HeadlessCount -ne 0) {
+		$headlessFiles = New-Object System.Collections.Generic.List[string]
+		for ($i = 1; $i -le $HeadlessCount; $i++) {
+			$path = "$RootPath/$GameName-hc$i"
+			if (!(Test-Path $path)) {
+				Write-Error "Could not resolve the path: $path"
+			}
+			$headlessFiles.Add($path)
+		}
+	}
+	
+	switch ($CMD) {
+		start {
+			Invoke-Expression "bash $serverInstancePath $CMD"
+			foreach ($headlessFile in $headlessFiles) {
+				Invoke-Expression "bash $headlessFile $CMD"
+			}
+			break
+		}
+		stop {
+			Invoke-Expression "bash $serverInstancePath $CMD"
+			foreach ($headlessFile in $headlessFiles) {
+				Invoke-Expression "bash $headlessFile $CMD"
+			}
+			break
+		}
+		restart {
+			Invoke-Expression "bash $serverInstancePath $CMD"
+			foreach ($headlessFile in $headlessFiles) {
+				Invoke-Expression "bash $headlessFile $CMD"
+			}
+			break
+		}
+		update {
+			bash $serverInstancePath $CMD
+			break
+		}
+		Default {
+			Write-Error "Please use one of the following commands: start, stop, restart, update"
+		}
+	}
+}
 function Get-SteamModCollection {
 	param (
 		[Parameter(Mandatory)][ulong]$ModCollectionSteamId
@@ -407,7 +461,6 @@ function Set-LGSMConfig {
 	##Set headless
 	foreach ($headlessConfigFile in $headlessConfigFiles) {
 		$headlessConfig = Get-ConfigFile $headlessConfigFile
-		$ServerPort += 12
 		if ([string]::IsNullOrWhiteSpace($ServerPassword)) {
 			Set-ConfigKey -Config $headlessConfig -Name "startparameters" -Value "-client -connect=127.0.0.1:$ServerPort -mod='`${mods}'"
 		}
@@ -440,7 +493,7 @@ if (!$Unattended) {
 Set-HeadlessClients -RootPath $RootPath -GameName $gameName -HeadlessCount $HeadlessCount
 
 If (!$SkipRestart) {
-	Invoke-Expression "$PSCommandPath/Arma3ServerCmd.ps1 -CMD stop -HeadlessCount $HeadlessCount"
+	Invoke-LGSMScripts -RootPath $RootPath -GameName $gameName -HeadlessCount $HeadlessCount -CMD "stop"
 }
 
 #Get Steam credentials from LGSM config
@@ -486,6 +539,6 @@ Set-Arma3Keys -SteamPath $steamPath -ServerPath $serverPath -SteamAppId $arma3Cl
 Set-LGSMConfig -ConfigPath $lgsmConfigPath -GameName $gameName -RequiredSteamModIds $requiredSteamModIds -DLC $DLCs -HeadlessCount $HeadlessCount -ServerPassword $ServerPassword -ServerPort $ServerPort
 
 If (!$SkipRestart) {
-	Invoke-Expression "$PSCommandPath/Arma3ServerCmd.ps1 -CMD update"
-	Invoke-Expression "$PSCommandPath/Arma3ServerCmd.ps1 -CMD start -HeadlessCount $HeadlessCount"
+	Invoke-LGSMScripts -RootPath $RootPath -GameName $gameName -CMD "update"
+	Invoke-LGSMScripts -RootPath $RootPath -GameName $gameName -HeadlessCount $HeadlessCount -CMD "start"
 }
