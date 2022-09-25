@@ -169,6 +169,7 @@ function Set-HeadlessClients {
 	$newInstancePath = "$RootPath/$GameName-2"
 	$rootContent = Get-ChildItem $RootPath
 
+	$currectPath = Get-Location
 	Set-Location $RootPath
 	for ($i = 1; $i -le $HeadlessCount; $i++) {
 		$instanceName = "$GameName-hc$i"
@@ -187,6 +188,7 @@ function Set-HeadlessClients {
 		$null = Invoke-Expression "./$instanceName details"
 		Write-Host "Created $instanceName"
 	}
+	Set-Location $currectPath
 	Write-Host "All headless clients are ready"
 }
 function Invoke-LGSMScripts {
