@@ -345,11 +345,12 @@ function Get-SteamMods {
 	Write-Host "Downloading or validating Steam mods. This can take a while..."
 
 	for ($i = 0; $i -lt 10; $i++) {
-		Invoke-Expression "$SteamCmdPath +runscript $steamCMDScriptPath" | Tee-Object steamlogs
-		if ($steamlogs -notlike "Timeout downloading item") {
+		Invoke-Expression "$SteamCmdPath +runscript $steamCMDScriptPath" | Tee-Object steamlogs | Write-Host -ForegroundColor Yellow
+		if ($steamlogs -notlike "*Timeout downloading item*") {
 			continue
 		}
 		$steamlogs = $null
+		Write-Host "Retrying to download $($i +1) out of 10" -ForegroundColor Red
 	}
 	for ($i = 0; $i -lt $steamlogs.Count; $i++) {
 		if ($steamlogs[$i] -clike "*FAILED*" -or $steamlogs[$i] -like "*error*") {
