@@ -147,7 +147,7 @@ function Install-LGSM {
 	if (!(Test-Path ".steam/steamcmd/steamcmd.sh" )) {
 		Write-Error "Unable to find SteamCMD"
 	}
-	Invoke-Expression ".steam/steamcmd/steamcmd.sh +login $($commonConfig[$steamUserName]) $($commonConfig[$steamPassName]) +quit"
+	Invoke-Expression "$HOME/.steam/steamcmd/steamcmd.sh +login $($commonConfig[$steamUserName]) $($commonConfig[$steamPassName]) +quit"
 
 	Invoke-Expression "chmod +x $gamePath"
 	Invoke-Expression "$gamePath install" | Tee-Object linuxgsmLog
