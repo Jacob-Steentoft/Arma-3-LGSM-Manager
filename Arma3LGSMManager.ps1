@@ -344,7 +344,7 @@ function Get-SteamMods {
 	$successRegex = New-Object regex -ArgumentList @("Success\.")
 	Write-Host "Downloading or validating Steam mods. This can take a while..."
 
-	$steamlogs = Invoke-Expression "$SteamCmdPath +runscript $steamCMDScriptPath"
+	Invoke-Expression "$SteamCmdPath +runscript $steamCMDScriptPath" | Tee-Object steamlogs
 	for ($i = 0; $i -lt $steamlogs.Count; $i++) {
 		if ($steamlogs[$i] -clike "*FAILED*" -or $steamlogs[$i] -like "*error*") {
 			$steamlogs
