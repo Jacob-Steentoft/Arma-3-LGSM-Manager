@@ -316,6 +316,7 @@ function Get-SteamMods {
 	param (
 		[Parameter(Mandatory)][ulong]$SteamAppId,
 		[Parameter(Mandatory)][string]$SteamPath,
+		[Parameter(Mandatory)][string]$SteamCmdPath,
 		[Parameter(Mandatory)][string]$Username,
 		[Parameter(Mandatory)][string]$Password,
 		[Parameter()][ulong[]]$SteamModIds,
@@ -341,7 +342,7 @@ function Get-SteamMods {
 	$successRegex = New-Object regex -ArgumentList @("Success\.")
 	Write-Host "Downloading or validating Steam mods..."
 
-	$steamlogs = Invoke-Expression "steamcmd +runscript $steamCMDScriptPath"
+	$steamlogs = Invoke-Expression "$SteamCmdPath +runscript $steamCMDScriptPath"
 	for ($i = 0; $i -lt $steamlogs.Count; $i++) {
 		if ($steamlogs[$i] -clike "*FAILED*" -or $steamlogs[$i] -like "*error*") {
 			$steamlogs
@@ -591,7 +592,7 @@ $steamModIds = $requiredSteamModIds + $optionalSteamModIds | Where-Object { $_ -
 
 $steamModLookup = Get-SteamModLookup -SteamModIds $steamModIds
 
-Get-SteamMods -SteamPath $steamPath -SteamAppId $arma3ClientSteamAppId -SteamModIds $steamModIds -Username $steamCredentials.Username -Password $steamCredentials.Password -SteamModLookup $steamModLookup
+Get-SteamMods -SteamPath $steamPath -SteamCmdPath $steamCmdPath -SteamAppId $arma3ClientSteamAppId -SteamModIds $steamModIds -Username $steamCredentials.Username -Password $steamCredentials.Password -SteamModLookup $steamModLookup
 
 Set-Arma3Mods -SteamPath $steamPath -ServerPath $serverPath -SteamAppId $arma3ClientSteamAppId -RequiredSteamModIds $requiredSteamModIds
 
