@@ -122,22 +122,32 @@ function Install-LGSM {
 	}
 
 	$commonConfig = Get-ConfigFile -ConfigPath $commonConfigPath
+	$change = $false
 
 	$steamUserName = "steamuser"
 	if (!$commonConfig.ContainsKey($steamUserName)) {
 		$username = Read-Host "Please enter your steam username for downloading Arma 3"
 		$commonConfig.Add($steamUserName, $username)
+		$change = $true
 	}
 
 	$steamPassName = "steampass"
 	if (!$commonConfig.ContainsKey($steamPassName)) {
 		$username = Read-Host "Please enter your steam password for downloading Arma 3"
 		$commonConfig.Add($steamPassName, $username)
+		$change = $true
 	}
 
-	Set-ConfigFile -Config $commonConfig -ConfigFilePath $commonConfigPath
+	if ($change) {
+		Set-ConfigFile -Config $commonConfig -ConfigFilePath $commonConfigPath
+	}
 
-	Write-Host "Using credentails for $($commonConfig[$steamPassName]) in $commonConfigPath to sign into Steam"
+	Write-Host "Using credentails for $($commonConfig[$steamUserName]) in $commonConfigPath to sign into Steam"
+
+	if (!(Test-Path ".steam/steamcmd/steamcmd.sh" )) {
+		Write-Error "Unable to find SteamCMD"
+	}
+	Invoke-Expression ".steam/steamcmd/steamcmd.sh +login $($commonConfig[$steamUserName]) $($commonConfig[$steamPassName]) +quit"
 
 	Invoke-Expression "chmod +x $gamePath"
 	Invoke-Expression "$gamePath install" | Tee-Object linuxgsmLog

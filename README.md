@@ -16,6 +16,11 @@ This script should be not be used by a sudo user. It has been designed and teste
 
 ## :police_car: Requirements
 
+### Applications
+
+* Curl
+* SteamCMD
+
 ### Ports
 
 #### Ingoing
