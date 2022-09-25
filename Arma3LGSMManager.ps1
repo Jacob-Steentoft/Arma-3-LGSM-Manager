@@ -340,7 +340,7 @@ function Get-SteamMods {
 
 	$downloadRegex = New-Object regex -ArgumentList @("workshop_download_item \d* (?<modId>\d*) validate")
 	$successRegex = New-Object regex -ArgumentList @("Success\.")
-	Write-Host "Downloading or validating Steam mods..."
+	Write-Host "Downloading or validating Steam mods. This can take a while..."
 
 	$steamlogs = Invoke-Expression "$SteamCmdPath +runscript $steamCMDScriptPath"
 	for ($i = 0; $i -lt $steamlogs.Count; $i++) {
