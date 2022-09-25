@@ -88,7 +88,7 @@ function Install-LGSM {
 	$fileName = "linuxgsm.sh"
 	$linuxgsmPath = "$RootPath/$fileName"
 
-	if (Test-Path $ServerPath) {
+	if (Test-Path "$ServerPath/arma3server") {
 		Write-Host "Base instance has already been configured"
 		return
 	}
@@ -116,7 +116,11 @@ function Install-LGSM {
 	}
 
 	Invoke-Expression "chmod +x $gamePath"
-	Invoke-Expression "$gamePath install"
+	Invoke-Expression "$gamePath install" | Tee-Object linuxgsmLog
+	if ($linuxgsmLog -clike "*FAIL*") {
+		Set-Location $currectPath
+		Write-Error "Failed to install Arma 3 Server. Please refer to the error and try again"
+	}
 	Set-Location $currectPath
 	Write-Host "Installed Arma 3 through LGSM"
 }
