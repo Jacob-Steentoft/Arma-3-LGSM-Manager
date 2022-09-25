@@ -38,9 +38,9 @@ Port 2344 as UDP + TPC and 2345 as TPC for BattleEye.
 
 ## How to use
 
-Download Arma3LGSMManager.ps1.
+1. Download Arma3LGSMManager.ps1.
 
-Run Arma3LGSMManager.ps1 using PowerShell 7 and provide the required parameters.
+2. Run Arma3LGSMManager.ps1 using PowerShell 7 and provide the required parameters.
 
 **OBS**: -ServerPassword doesn't set the server password, but what password the headless clients will use to connect to your server.
 
