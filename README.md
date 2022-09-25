@@ -12,7 +12,7 @@ This script has only been tested using Debian 11. There should however not be an
 
 This script should be not be used by a sudo user. It has been designed and tested without any sudo commands or priviliges.
 
-## Requirements
+## :police_car: Requirements
 
 ### Ports
 
@@ -36,7 +36,7 @@ Port 2344 as UDP + TPC and 2345 as TPC for BattleEye.
 * PowerShell Version 7
 * Access to the internet
 
-## How to use
+## :bullettrain_front: How to use
 
 1. Download Arma3LGSMManager.ps1.
 
