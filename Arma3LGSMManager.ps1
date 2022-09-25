@@ -144,7 +144,7 @@ function Install-LGSM {
 
 	Write-Host "Using credentails for $($commonConfig[$steamUserName]) in $commonConfigPath to sign into Steam"
 
-	if (!(Test-Path ".steam/steamcmd/steamcmd.sh" )) {
+	if (!(Test-Path "$HOME/.steam/steamcmd/steamcmd.sh" )) {
 		Write-Error "Unable to find SteamCMD"
 	}
 	Invoke-Expression "$HOME/.steam/steamcmd/steamcmd.sh +login $($commonConfig[$steamUserName]) $($commonConfig[$steamPassName]) +quit"
