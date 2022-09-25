@@ -1,3 +1,4 @@
+#Requires -Version 7
 param (
 	[Parameter(Mandatory)][string]$RootPath,
 	[ulong]$SteamModCollectionId,
@@ -5,7 +6,7 @@ param (
 	[ulong]$SteamWhitelistCollectionId,
 	[ulong[]]$SteamWhitelistModIds,
 	[string[]]$DLCs,
-	[uint]$ServerPort,
+	[Parameter(Mandatory)][uint]$ServerPort,
 	[string]$ServerPassword,
 	[byte]$HeadlessCount,
 	[switch]$SkipRestart,
@@ -439,7 +440,7 @@ if (!$Unattended) {
 Set-HeadlessClients -RootPath $RootPath -GameName $gameName -HeadlessCount $HeadlessCount
 
 If (!$SkipRestart) {
-	Invoke-Expression "$RootPath/Arma3ServerCmd.ps1 -CMD stop -HeadlessCount $HeadlessCount"
+	Invoke-Expression "$PSCommandPath/Arma3ServerCmd.ps1 -CMD stop -HeadlessCount $HeadlessCount"
 }
 
 #Get Steam credentials from LGSM config
@@ -485,6 +486,6 @@ Set-Arma3Keys -SteamPath $steamPath -ServerPath $serverPath -SteamAppId $arma3Cl
 Set-LGSMConfig -ConfigPath $lgsmConfigPath -GameName $gameName -RequiredSteamModIds $requiredSteamModIds -DLC $DLCs -HeadlessCount $HeadlessCount -ServerPassword $ServerPassword -ServerPort $ServerPort
 
 If (!$SkipRestart) {
-	Invoke-Expression "$RootPath/Arma3ServerCmd.ps1 -CMD update"
-	Invoke-Expression "$RootPath/Arma3ServerCmd.ps1 -CMD start -HeadlessCount $HeadlessCount"
+	Invoke-Expression "$PSCommandPath/Arma3ServerCmd.ps1 -CMD update"
+	Invoke-Expression "$PSCommandPath/Arma3ServerCmd.ps1 -CMD start -HeadlessCount $HeadlessCount"
 }
