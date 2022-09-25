@@ -10,7 +10,7 @@ Further information about the installtion of the Arma 3 server can be found at: 
 
 Running this script can and will overwrite files, so please make sure to set the root path to a place where it will not overwrite anything important.
 
-This script has only been tested using Debian 11. There should however not be any problems running this using other distros, as the functionaly relies on PowerShell, SteamCMD, and the LinuxGSM script.
+This script has only been tested using Debian. There should however not be any problems running this using other distros, as the functionaly relies on PowerShell, SteamCMD, and the LinuxGSM script.
 
 This script has to be run by a sudo user the first few times until LinuxGSM has installed all the dependencies. It has been designed and tested without any sudo commands or priviliges afterwards.
 
@@ -20,7 +20,7 @@ This script has to be run by a sudo user the first few times until LinuxGSM has 
 
 Tested on Debian 11 and 10. But should run on any linux distro.
 
-### Applications
+### Application Dependencies
 
 * curl
 * steamCMD
