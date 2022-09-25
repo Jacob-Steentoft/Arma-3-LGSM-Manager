@@ -82,8 +82,9 @@ function Get-ConfigFile {
 function Install-LGSM {
 	param(
 		[Parameter(Mandatory)][string]$RootPath,
-		[Parameter(Mandatory)][string]$GameName,
-		[Parameter(Mandatory)][string]$ServerPath
+		[Parameter(Mandatory)][string]$ServerPath,
+		[Parameter(Mandatory)][string]$SteamCmdPath,
+		[Parameter(Mandatory)][string]$GameName
 	)
 	$fileName = "linuxgsm.sh"
 	$linuxgsmPath = "$RootPath/$fileName"
@@ -144,10 +145,10 @@ function Install-LGSM {
 
 	Write-Host "Using credentails for $($commonConfig[$steamUserName]) in $commonConfigPath to sign into Steam"
 
-	if (!(Test-Path "$HOME/.steam/steamcmd/steamcmd.sh" )) {
+	if (!(Test-Path $SteamCmdPath )) {
 		Write-Error "Unable to find SteamCMD"
 	}
-	Invoke-Expression "$HOME/.steam/steamcmd/steamcmd.sh +login $($commonConfig[$steamUserName]) $($commonConfig[$steamPassName]) +quit"
+	Invoke-Expression "$SteamCmdPath +login $($commonConfig[$steamUserName]) $($commonConfig[$steamPassName]) +quit"
 
 	Invoke-Expression "chmod +x $gamePath"
 	Invoke-Expression "$gamePath install" | Tee-Object linuxgsmLog
@@ -165,16 +166,16 @@ function Set-HeadlessClients {
 		[Parameter(Mandatory)][sbyte]$HeadlessCount
 	)
 	$fileName = "linuxgsm.sh"
-	$linuxgsmPath = "$RootPath/$fileName"
 	$newInstancePath = "$RootPath/$GameName-2"
 	$rootContent = Get-ChildItem $RootPath
 
+	Set-Location $RootPath
 	for ($i = 1; $i -le $HeadlessCount; $i++) {
 		$instanceName = "$GameName-hc$i"
 		if ($rootContent.Name -contains $instanceName) {
 			continue
 		}
-		Invoke-Expression "bash $linuxgsmPath $GameName"
+		Invoke-Expression "bash $fileName $GameName"
 
 		if (!(Test-Path $newInstancePath)) {
 			Write-Error "New instance was not created"
@@ -540,12 +541,13 @@ $gameName = "arma3server"
 
 #Directory references
 $serverPath = "$RootPath/serverfiles"
-$steamPath = "$RootPath/.steam/steam"
+$steamPath = "$HOME/.steam/steam"
+$steamCmdPath = "$HOME/.steam/steamcmd/steamcmd.sh"
 $lgsmConfigPath = "$RootPath/lgsm/config-lgsm/$gameName"
 
 ##RUN
 if (!$Unattended) {
-	Install-LGSM -RootPath $RootPath -GameName $gameName -ServerPath $serverPath
+	Install-LGSM -RootPath $RootPath -ServerPath $serverPath -SteamCmdPath $steamCmdPath -GameName $gameName
 }
 
 Set-HeadlessClients -RootPath $RootPath -GameName $gameName -HeadlessCount $HeadlessCount
