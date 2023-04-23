@@ -1,11 +1,13 @@
 function Invoke-LGSMScripts {
+	[CmdletBinding()]
 	param(
 		[Parameter(Mandatory)][string]$RootPath,
 		[Parameter(Mandatory)][string]$GameName,
 		[byte]$HeadlessCount,
 		[Parameter(Mandatory)][string]$CMD
 	)
-	$serverInstancePath = "$RootPath/$GameName"
+	
+	$serverInstancePath = Join-Path -Path $RootPath -ChildPath $GameName
 	if (!(Test-Path $serverInstancePath)) {
 		Write-Error "Unable to resolve the path: $RootPath"
 	}

@@ -1,4 +1,5 @@
 function Set-Arma3Keys {
+	[CmdletBinding()]
 	param (
 		[Parameter(Mandatory)][string]$ServerPath,
 		[Parameter(Mandatory)][string]$SteamPath,

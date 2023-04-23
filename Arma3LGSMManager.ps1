@@ -1,16 +1,14 @@
 #Requires -Version 7
 param (
 	[Parameter(Mandatory)][string]$RootPath,
+	[Parameter(Mandatory)][uint]$ServerPort,
 	[ulong]$SteamModCollectionId,
 	[ulong[]]$SteamModIds,
 	[ulong]$SteamWhitelistCollectionId,
 	[ulong[]]$SteamWhitelistModIds,
 	[string[]]$DLCs,
-	[Parameter(Mandatory)][uint]$ServerPort,
 	[string]$ServerPassword,
-	[byte]$HeadlessCount,
-	[switch]$SkipRestart,
-	[switch]$Unattended
+	[byte]$HeadlessCount
 )
 $ErrorActionPreference = "Stop"
 ##FUNCTIONS
@@ -30,15 +28,9 @@ $steamPath = "$RootPath/.steam/steam"
 $lgsmConfigPath = "$RootPath/lgsm/config-lgsm/$gameName"
 
 ##RUN
-if (!$Unattended) {
-	Install-LGSM -RootPath $RootPath -GameName $gameName
-}
-
 Set-HeadlessClients -RootPath $RootPath -GameName $gameName -HeadlessCount $HeadlessCount
 
-If (!$SkipRestart) {
-	Invoke-LGSMScripts -RootPath $RootPath -GameName $gameName -HeadlessCount $HeadlessCount -CMD "stop"
-}
+Invoke-LGSMScripts -RootPath $RootPath -GameName $gameName -HeadlessCount $HeadlessCount -CMD "stop"
 
 #Get Steam credentials from LGSM config
 $steamCredentials = Get-LGSMSteamCredentials -CommonCfgPath "$lgsmConfigPath/common.cfg"
@@ -46,11 +38,11 @@ $steamCredentials = Get-LGSMSteamCredentials -CommonCfgPath "$lgsmConfigPath/com
 #Get required mods ids from Steam
 if ($SteamModCollectionId -ne 0) {
 	Write-Host "Using Steam mod collection for required mods"
-	$requiredSteamModIds = Get-SteamModCollection -ModCollectionSteamId $SteamModCollectionId
+	[long[]]$requiredSteamModIds = Get-SteamModCollection -ModCollectionSteamId $SteamModCollectionId
 }
 elseif ($SteamModIds.Length -ne 0) {
 	Write-Host "Using Steam mod ids for required mods"
-	$requiredSteamModIds = $SteamModIds
+	[long[]]$requiredSteamModIds = $SteamModIds
 }
 else {
 	Write-Host "No required mods were provided"
@@ -59,18 +51,27 @@ else {
 #Get whitelisted mods ids from Steam
 if ($SteamWhitelistCollectionId -ne 0) {
 	Write-Host "Using Steam mod collection for optional mods"
-	$optionalSteamModIds = Get-SteamModCollection -ModCollectionSteamId $SteamWhitelistCollectionId
+	[long[]]$optionalSteamModIds = Get-SteamModCollection -ModCollectionSteamId $SteamWhitelistCollectionId
 }
 elseif ($SteamWhitelistModIds.Length -ne 0) {
 	Write-Host "Using Steam mod ids for optional mods"
-	$optionalSteamModIds = $SteamWhitelistModIds
+	[long[]]$optionalSteamModIds = $SteamWhitelistModIds
 }
 else {
 	Write-Host "No optional mods were provided"
 }
 
 #Download all mods and confiure the Arma 3 server to accept them
-$steamModIds = $requiredSteamModIds + $optionalSteamModIds | Where-Object { $_ -ne 0 }
+$totalMods = $optionalSteamModIds.Count + $requiredSteamModIds.Count
+$steamModIds = New-Object long[] $totalMods
+
+if ($requiredSteamModIds.Count -gt 0) {
+	$requiredSteamModIds.CopyTo($steamModIds, 0)
+}
+
+if ($optionalSteamModIds.Count -gt 0) {
+	$optionalSteamModIds.CopyTo($steamModIds, $requiredSteamModIds.Count)
+}
 
 $steamModLookup = Get-SteamModLookup -SteamModIds $steamModIds
 
@@ -82,7 +83,5 @@ Set-Arma3Keys -SteamPath $steamPath -ServerPath $serverPath -SteamAppId $arma3Cl
 
 Set-LGSMConfig -ConfigPath $lgsmConfigPath -GameName $gameName -RequiredSteamModIds $requiredSteamModIds -DLC $DLCs -HeadlessCount $HeadlessCount -ServerPassword $ServerPassword -ServerPort $ServerPort
 
-If (!$SkipRestart) {
-	Invoke-LGSMScripts -RootPath $RootPath -GameName $gameName -CMD "update"
-	Invoke-LGSMScripts -RootPath $RootPath -GameName $gameName -HeadlessCount $HeadlessCount -CMD "start"
-}
+Invoke-LGSMScripts -RootPath $RootPath -GameName $gameName -CMD "update"
+Invoke-LGSMScripts -RootPath $RootPath -GameName $gameName -HeadlessCount $HeadlessCount -CMD "start"

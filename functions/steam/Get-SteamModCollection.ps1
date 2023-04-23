@@ -1,4 +1,6 @@
 function Get-SteamModCollection {
+	[CmdletBinding()]
+	[OutputType([long[]])]
 	param (
 		[Parameter(Mandatory)][ulong]$ModCollectionSteamId
 	)
@@ -7,7 +9,7 @@ function Get-SteamModCollection {
 		"publishedfileids[0]" = $ModCollectionSteamId
 	}
 
-	$steamModIds = $response.response.collectiondetails.children.publishedfileid
+	[long[]]$steamModIds = $response.response.collectiondetails.children.publishedfileid
 
 	if ($steamModIds.Count -eq 0) {
 		Write-Error "No workshop steam mods found"

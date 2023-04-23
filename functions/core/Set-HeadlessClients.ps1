@@ -1,12 +1,14 @@
 function Set-HeadlessClients {
+	[CmdletBinding()]
 	param(
 		[Parameter(Mandatory)][string]$RootPath,
 		[Parameter(Mandatory)][string]$GameName,
 		[Parameter(Mandatory)][sbyte]$HeadlessCount
 	)
+
 	$fileName = "linuxgsm.sh"
-	$linuxgsmPath = "$RootPath/$fileName"
-	$newInstancePath = "$RootPath/$GameName-2"
+	$linuxgsmPath = Join-Path -Path $RootPath -ChildPath $fileName
+	$newInstancePath = Join-Path -Path $RootPath -ChildPath "$GameName-2"
 	$rootContent = Get-ChildItem $RootPath
 
 	for ($i = 1; $i -le $HeadlessCount; $i++) {

@@ -1,10 +1,12 @@
 function Install-LGSM {
+	[CmdletBinding()]
 	param(
 		[Parameter(Mandatory)][string]$RootPath,
 		[Parameter(Mandatory)][string]$GameName
 	)
+
 	$fileName = "linuxgsm.sh"
-	$linuxgsmPath = "$RootPath/$fileName"
+	$linuxgsmPath = Join-Path -Path -ChildPath $fileName
 
 	if (Test-Path $linuxgsmPath) {
 		Write-Host "Found linuxgsm.sh"

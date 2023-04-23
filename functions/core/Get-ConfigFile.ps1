@@ -1,4 +1,5 @@
 function Get-ConfigFile {
+	[CmdletBinding()]
 	param(
 		[Parameter(Mandatory)][string]$ConfigPath
 	)

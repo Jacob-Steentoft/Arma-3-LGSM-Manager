@@ -1,7 +1,10 @@
 function Get-LGSMSteamCredentials {
+	[CmdletBinding()]
+	[OutputType([hashtable])]
 	param(
 		[Parameter(Mandatory)][string]$CommonCfgPath
 	)
+
 	if (!(Test-Path $CommonCfgPath)) {
 		Write-Error "Did not find config path at $CommonCfgPath"
 	}

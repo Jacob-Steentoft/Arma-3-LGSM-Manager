@@ -1,4 +1,5 @@
 function Set-ConfigKey {
+	[CmdletBinding()]
 	param(
 		[Parameter(Mandatory)][hashtable]$Config,
 		[Parameter(Mandatory)][string]$Name,

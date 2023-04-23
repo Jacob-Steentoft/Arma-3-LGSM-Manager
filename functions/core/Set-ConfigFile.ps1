@@ -1,4 +1,5 @@
 function Set-ConfigFile {
+	[CmdletBinding()]
 	param(
 		[Parameter(Mandatory)][hashtable]$Config,
 		[Parameter(Mandatory)][string]$ConfigFilePath
@@ -8,10 +9,10 @@ function Set-ConfigFile {
 		Write-Error "Unable to resolve the path: $ConfigFilePath"
 	}
 
-	$content = New-Object System.Collections.Generic.List[string]
+	$stringBuilder = New-Object System.Text.StringBuilder
 	foreach ($pair in $Config.GetEnumerator()) {
-		$content.Add("$($pair.Key)=`"$($pair.Value)`"")
+		$stringBuilder.AppendLine("$($pair.Key)=`"$($pair.Value)`"")
 	}
 
-	Set-Content -Value $content -Path $ConfigFilePath
+	Set-Content -Value ($stringBuilder.ToString()) -Path $ConfigFilePath
 }

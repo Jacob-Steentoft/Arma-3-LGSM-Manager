@@ -1,4 +1,5 @@
 function Set-LGSMConfig {
+	[CmdletBinding()]
 	param (
 		[Parameter(Mandatory)][string]$ConfigPath,
 		[Parameter(Mandatory)][string]$GameName,
@@ -20,17 +21,12 @@ function Set-LGSMConfig {
 
 	$headlessConfigFiles = New-Object System.Collections.Generic.List[psobject]
 	for ($i = 1; $i -le $HeadlessCount; $i++) {
-		$path = "$ConfigPath/$GameName-hc$i.cfg"
-		if (!(Test-Path $path)) {
-			Write-Error "Could not resolve the path: $path"
-		}
+		$path = Join-Path -Path $ConfigPath -ChildPath "$GameName-hc$i.cfg" -Resolve
+
 		$headlessConfigFiles.Add((Get-Item $path))
 	}
 
-	$commonPath = "$ConfigPath/common.cfg"
-	if (!(Test-Path $commonPath)) {
-		Write-Error "Could not resolve the path: $commonPath"
-	}
+	$commonPath = Join-Path -Path $ConfigPath -ChildPath "common.cfg" -Resolve
 	$commonConfigFile = Get-Item $commonPath
 
 	##Set main server
@@ -40,21 +36,25 @@ function Set-LGSMConfig {
 
 	##Set common
 	$commonConfig = Get-ConfigFile $commonConfigFile
+
 	#Set common mods
 	$modList = New-Object System.Collections.Generic.List[string]
 	foreach ($dlc in $DLCs) {
 		$modList.Add($dlc)
 	}
+
 	foreach ($requiredSteamModId in $RequiredSteamModIds) {
 		$modList.Add("mods/$requiredSteamModId")
 	}
+
 	Set-ConfigKey -Config $commonConfig -Name "mods" -Value ($modList -join ";")
+
 	#Set common branch
-	$branchValue = ""
-	if ($DLCs.Count -gt 0) {
-		$branchValue = "creatordlc"
-	}
-	Set-ConfigKey -Config $commonConfig -Name "branch" -Value $branchValue
+
+	$steamBranch = $DLCs.Count -gt 0 ? "creatordlc" : ""
+
+	Set-ConfigKey -Config $commonConfig -Name "branch" -Value $steamBranch
+
 	#Set common querymode
 	Set-ConfigKey -Config $commonConfig -Name "querymode" -Value 1
 	#Write content back to common.cfg
@@ -63,14 +63,13 @@ function Set-LGSMConfig {
 	##Set headless
 	foreach ($headlessConfigFile in $headlessConfigFiles) {
 		$headlessConfig = Get-ConfigFile $headlessConfigFile
-		if ([string]::IsNullOrWhiteSpace($ServerPassword)) {
-			Set-ConfigKey -Config $headlessConfig -Name "startparameters" -Value "-client -connect=127.0.0.1:$ServerPort -mod='`${mods}'"
-		}
-		else {
-			Set-ConfigKey -Config $headlessConfig -Name "startparameters" -Value "-client -connect=127.0.0.1:$ServerPort -password=$ServerPassword -mod='`${mods}'"
-		}
+		
+		$headlessConfigValue = [string]::IsNullOrWhiteSpace($ServerPassword) ? "-client -connect=127.0.0.1:$ServerPort -mod='`${mods}'" : "-client -connect=127.0.0.1:$ServerPort -password=$ServerPassword -mod='`${mods}'"
+		
+		Set-ConfigKey -Config $headlessConfig -Name "startparameters" -Value $headlessConfigValue
 
 		Set-ConfigFile -Config $headlessConfig -ConfigFilePath $headlessConfigFile.FullName
 	}
+
 	Write-Host "Updated the LGSM configuration"
 }
