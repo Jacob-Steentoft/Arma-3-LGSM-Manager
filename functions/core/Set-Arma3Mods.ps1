@@ -57,6 +57,7 @@ function Set-Arma3Mods {
 		
 		#Create or update symlink if necessary
 		$foundSymlink = $false
+		$symlinkPath = Join-Path -Path $serverModsPath -ChildPath $steamModDirectory.Name
 		foreach ($currentSymlink in $currentSymlinks) {
 			if ($currentSymlink.Name -ne $steamModDirectory.Name) {
 				continue
@@ -65,12 +66,11 @@ function Set-Arma3Mods {
 			$foundSymlink = $true
 
 			if ($currentSymlink.Target -ne $steamModDirectory.FullName) {
-				$symlinkPath = Join-Path -Path $serverModsPath -ChildPath $steamModDirectory.Name
 				Remove-Item $symlinkPath -Force
 
 				$null = New-Item -ItemType SymbolicLink -Path $symlinkPath -Target $steamModDirectory.FullName -Force
 
-				Write-Host "Updated symlink for Steam mod id: $($currentMod.Name)"
+				Write-Host "Updated symlink for Steam mod id: $($steamModDirectory.Name)"
 				break
 			}
 		}
@@ -78,7 +78,7 @@ function Set-Arma3Mods {
 		if (!$foundSymlink) {
 			$null = New-Item -ItemType SymbolicLink -Path $symlinkPath -Target $steamModDirectory.FullName
 
-			Write-Host "Created symlink for Steam mod id: $($currentMod.Name)"
+			Write-Host "Created symlink for Steam mod id: $($steamModDirectory.Name)"
 			continue
 		}
 	}
