@@ -31,7 +31,7 @@ function Set-LGSMConfig {
 
 	##Set main server
 	$serverConfig = Get-ConfigFile $serverConfigFile
-	Set-ConfigKey -Config $serverConfig -Name "startparameters" -Value "-ip=`${ip} -port=$ServerPort -cfg=`${networkcfgfullpath} -config=`${servercfgfullpath} -mod='`${mods}' -servermod=`${servermods} -bepath=`${bepath} -loadmissiontomemory"
+	Set-ConfigKey -Config $serverConfig -Name "startparameters" -Value "-ip=`${ip} -port=$ServerPort -cfg=`${networkcfgfullpath} -config='`${servercfgfullpath}' -mod='`${mods}' -servermod=`${servermods} -bepath=`${bepath} -loadmissiontomemory"
 	Set-ConfigFile -Config $serverConfig -ConfigFilePath $serverConfigFile.FullName
 
 	##Set common
